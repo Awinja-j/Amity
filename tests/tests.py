@@ -14,7 +14,7 @@ how do the objects in amity relate to each other
 '''
 
 import unittest
-from Amity import Amity
+from .application.Amity import Amity
 
 class TestAmity(unittest.TestCase):
 
