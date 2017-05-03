@@ -2,12 +2,12 @@
 """
 
 Usage:
-front.py create_room <room_name>...                                     creates room in Amity
-front.py edit_room   <edit_room>                                        Edits room
+front.py createroom -t <roomtype> -n <name>...                          creates room in Amity
+front.py editroom      <edit_room>                                      Edits room
 front.py edit_room_type <editroom_type>
 front.py Delete_room <DeleteRoom>
-front.py add_person <first_name> <last_name> <type> [--accommodate=N]   Adds person to Amity
-front.py Edit_person_name <name>
+front.py addperson -n <person_name> -r <person_role> -a [--accommodate=N] -p <phone_number>   Adds person to Amity 
+front.py Edit_person_name <first_name> <last_name>
 front.py Edit_person_info <name>
 front.py delete_person <name>
 front.py reallocate_person <first_name> <last_name> <new_room_name>     reallocates person in Amity
@@ -35,8 +35,6 @@ from colorama import init
 init(strip=not sys.stdout.isatty())
 from docopt import docopt, DocoptExit
 from Amity import Amity
-from Person import Person
-from Room import Room
 from termcolor import cprint
 from pyfiglet import figlet_format
 
@@ -72,33 +70,39 @@ def docopt_cmd(func):
     return fn
 
 
-class contact_manager(cmd.Cmd):
+class FrontAmity(cmd.Cmd):
     text = "Amity"
     cprint(figlet_format(text, font="basic"), "white")
     intro = " Welcome to Amity"
     prompt = 'Amity>> '
     file = None
+    amity = Amity()
 
     @docopt_cmd
     def do_createroom(self, arg):
-        """Usage: createroom -t <roomtype> -n <name>"""
-        full_name = arg['<firstname>'] + ' ' + arg['<lastname>']
-        phone_number = arg['<phonenumber>']
-        print(c_manager.add(full_name, phone_number))
+        """Usage: createroom -t <room_type> -n <room_name>"""
+        print(self.amity.create_room(arg['<room_type>'], arg['<room_name>']))
+
+    @docopt_cmd
+    def do_addperson(self, arg):
+        """Usage:addperson -n <person_name> -r <person_role> -a [--accommodate=N] -p <phone_number>"""
+        print(self.amity.add_person(arg['<person_name>'], arg['<person_role>'], arg['<person_accomodation>'],
+                                    arg['<person_phone>']))
+
+    @docopt_cmd
+    def do_edit_person_info(self, arg):
+        """Usage:editpersoninfo <entry> """
+        print(self.amity.edit_person_name(arg['entry']))
+
     @docopt_cmd
     def do_editroom(self, arg):
+        """Usage:"""
         pass
     @docopt_cmd
     def do_editroomtype(self, arg):
         pass
     @docopt_cmd
     def do_Deleteroom(self, arg):
-        pass
-    @docopt_cmd
-    def do_add_person(self, arg):
-        pass
-    @docopt_cmd
-    def do_editpersonname(self, arg):
         pass
     @docopt_cmd
     def do_editpersoninfo(self, arg):
@@ -167,6 +171,6 @@ opt = docopt(__doc__, sys.argv[1:])
 if opt['--interactive']:
     try:
         print(__doc__)
-        contact_manager().cmdloop()
+        FrontAmity().cmdloop()
     except KeyboardInterrupt:
         print("Exiting App")

@@ -36,8 +36,14 @@ $ python amity.py -i
 
 **Commands**
 ```
-create_room <room_name>...
-add_person <first_name> <last_name> <type> [--accommodate=N]
+create_room <room_type> <room_name>...
+edit_room <old_room_name> <new_room_name>
+edit_room_type <room_name><room_type>
+delete_room <room_name>
+add_person <first_name> <last_name> <type> [--accommodate=N] <phone_number>
+edit_person_name <old_name> <new_name>
+edit_person_info <name> <new_type> <new_accomodation> <phone_number>
+Delete_person <name>
 reallocate_person <first_name> <last_name> <new_room_name>
 load_people
 print_allocations [--o=file_name]
@@ -47,6 +53,7 @@ allocate_office <first_name> <last_name>
 allocate_livingspace <first_name> <last_name>
 save_state [--db=sqlite_database]
 load_state <sqlite_database>
+search <room_name> <name> <phone_number>
 quit
 reset
 clear
