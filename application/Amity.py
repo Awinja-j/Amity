@@ -24,92 +24,99 @@ class Amity(object):
 
     def get_available_room(self, arg):
         room_list = [key for key in arg
-                     if len(arg[key].occupants) < arg[key].max_no_occupants]
+                     if len(key.occupants) < key.max_no_occupants]
         return room_list
 
     def create_room(self, room_type, room_name):
         room_type = room_type.lower()
+        room_names = [room.room_name for room in self.all_offices]
+        room_names1 = [room.room_name for room in self.all_livingspace]
+
         for name in room_name:
             name = name.lower()
             if room_type == 'office':
-                if name in self.all_offices:
+                if name in room_names:
                     print('This office name already exists in Amity')
                 else:
                     office = Office(name)
-                    self.all_offices.append(office.room_name)
+                    self.all_offices.append(office)
                     print('Office space ' + name + ' has been created succesfully!!')
 
             else:
-                    if name in self.all_livingspace:
+                    if name in room_names1:
                         print('This livingspace name already exists in Amity')
                     else:
                         lv = Livingspace(name)
-                        self.all_livingspace.append(lv.room_name)
+                        self.all_livingspace.append(lv)
                         print('Livingspace ' + name + ' has been created succesfully!!')
 
     def add_person(self, person_name, person_role, want_accomodation, phone_number):
         person_name = person_name.lower()
         person_role = person_role.lower()
         want_accomodation = want_accomodation.lower()
-        if self.all_offices and self.all_livingspace:
-            if person_role == 'staff':
-                if person_name not in self.all_staff:
-                    if want_accomodation == "n":
-                        if not phone_number:
-                            staff = Staff(person_name, want_accomodation, phone_number)
-                            self.all_staff.append(staff)
-                            print(person_name + 'has been succesfully added to Amity')
-                        else:
-                            staff = Staff(person_name, want_accomodation, phone_number)
-                            self.all_staff.append(staff)
-                            client = Client(account_sid, auth_token)
-                            client.messages.create(
-                                to=phone_number,
-                                from_="+14026206866",
-                                body='Hello' + person_name + ', ' + 'you have been succesfully added to Amity')
-                            print('Hooray!')
+        if person_role == 'staff':
+            if person_name not in self.all_staff:
+                if want_accomodation == "n":
+                    if not phone_number:
+                        staff = Staff(person_name, want_accomodation, phone_number)
+                        self.all_staff.append(staff)
+                        print(staff.person_name + 'has been succesfully added to Amity')
                     else:
+                        staff = Staff(person_name, want_accomodation, phone_number)
+                        self.all_staff.append(staff)
+                        client = Client(account_sid, auth_token)
+                        client.messages.create(
+                            to=phone_number,
+                            from_="+14026206866",
+                            body='Hello' + staff.person_name + ', ' + 'you have been succesfully added to Amity')
+                        print('Hooray!')
+                else:
+                    if self.all_offices:
                         if not phone_number:
                             staff = Staff(person_name, want_accomodation, phone_number)
                             self.all_staff.append(staff)
                             room = random.choice(self.get_available_room(self.all_offices))
                             room.occupants.append(staff)
-                            print(person_name + 'Has been allocated to' + room + 'succesfully!!')
+                            print(staff.person_name + 'Has been allocated to' + room.room_name + 'succesfully!!')
                         else:
                             staff = Staff(person_name, want_accomodation, phone_number)
                             self.all_staff.append(staff)
                             room = random.choice(self.get_available_room(self.all_offices))
+                            print(room.room_name)
                             room.occupants.append(staff)
                             client = Client(account_sid, auth_token)
                             client.messages.create(
                                 to=phone_number,
                                 from_='+14026206866',
-                                body='Hello' + staff.person_name + ', ' + 'you have been allocated to' + room + 'succesfully!!. Amity')
-                else:
-                    print("This Name Combination already exist in Amity. Please use the Edit or Delete Command to Modify Entry.")
-            if person_role == 'fellow':
-                if person_name not in self.all_fellow:
-                        if want_accomodation == "n":
-                            if not phone_number:
-                                fellow = Fellow(person_name, want_accomodation, phone_number)
-                                self.all_fellow.append(fellow)
-                                print(person_name + 'has been succesfully added to Amity')
-                            else:
-                                fellow = Fellow(person_name, want_accomodation, phone_number)
-                                self.all_fellow.append(fellow)
-                                client = Client(account_sid, auth_token)
-                                client.messages.create(
-                                    to=phone_number,
-                                    from_="+14026206866",
-                                    body='Hello ' + person_name + ', ' + 'you have been succesfully added to Amity')
-
+                                body='Hello' + staff.person_name + ', ' + 'you have been allocated to '+ room.room_name +' succesfully!!. Amity')
+                    else:
+                        print('There is no rooms available in Amity. Use the createroom command to create one!')
+            else:
+                print(person_name + " already exist in Amity. Please use the Edit or Delete Command to Modify Entry.")
+        if person_role == 'fellow':
+            if person_name not in self.all_fellow:
+                    if want_accomodation == "n":
+                        if not phone_number:
+                            fellow = Fellow(person_name, want_accomodation, phone_number)
+                            self.all_fellow.append(fellow)
+                            print(person_name + 'has been succesfully added to Amity')
                         else:
+                            fellow = Fellow(person_name, want_accomodation, phone_number)
+                            self.all_fellow.append(fellow)
+                            client = Client(account_sid, auth_token)
+                            client.messages.create(
+                                to=phone_number,
+                                from_="+14026206866",
+                                body='Hello ' + fellow.person_name + ', ' + 'you have been succesfully added to Amity')
+
+                    else:
+                        if self.all_offices and self.all_livingspace:
                             if not phone_number:
                                 fellow = Fellow(person_name, want_accomodation, phone_number)
                                 self.all_fellow.append(fellow)
                                 room = random.choice(self.get_available_room(self.all_livingspace))
                                 room.occupants.append(fellow)
-                                print(person_name + 'has been allocated to' + room + 'succesfully!!')
+                                print(fellow.person_name + 'has been allocated to' + room.room_name + 'succesfully!!')
                             else:
                                 fellow = Fellow(person_name, want_accomodation, phone_number)
                                 self.all_fellow.append(fellow)
@@ -119,11 +126,12 @@ class Amity(object):
                                 client.messages.create(
                                     to=phone_number,
                                     from_='+14026206866',
-                                    body='Hello ' + person_name + ', ' + ' you have been allocated to' + room + 'succesfully!!')
-                else:
-                    return 'This Name Combination already exist in Amity. Please use the Edit or Delete Command to Modify Entry.'
-        else:
-            print('There is no rooms available in Amity. Use the createroom command to create one!')
+                                    body='Hello ' + fellow.person_name + ', ' + ' you have been allocated to' + room.room_name + 'succesfully!!')
+                        else:
+                            print('There is no rooms available in Amity. Use the createroom command to create one!')
+            else:
+                print(person_name + " already exist in Amity. Please use the Edit or Delete Command to Modify Entry.")
+
 
     def edit_person_info(self, person_name):
         '''this edits a persons name'''

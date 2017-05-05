@@ -8,7 +8,7 @@ class Fellow(Person):
     def __init__(self, person_name, person_accomodation, person_phone):
         Person.__init__(self, person_name, person_accomodation, person_phone)
         self.person_role = 'fellow'
-        self.room_type = 'livingSpace','office'
+        self.room_type = 'livingSpace', 'office'
 
 
    
