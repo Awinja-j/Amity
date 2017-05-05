@@ -6,7 +6,7 @@ front.py createroom -t <roomtype> -n <name>...                          creates 
 front.py editroom      <edit_room>                                      Edits room
 front.py edit_room_type <editroom_type>
 front.py Delete_room <DeleteRoom>
-front.py addperson -n <person_name> -r <person_role> -a [--accommodate=N] -p <phone_number>   Adds person to Amity 
+front.py addperson -n <first_name> <last_name> -r <person_role> -a [--accommodate=N] -p <phone_number>   Adds person to Amity 
 front.py Edit_person_name <first_name> <last_name>
 front.py Edit_person_info <name>
 front.py delete_person <name>
@@ -80,14 +80,18 @@ class FrontAmity(cmd.Cmd):
 
     @docopt_cmd
     def do_createroom(self, arg):
-        """Usage: createroom -t <room_type> -n <room_name>"""
-        print(self.amity.create_room(arg['<room_type>'], arg['<room_name>']))
+        """Usage: createroom -t <room_type> -n <room_name>..."""
+        # print(self.amity.create_room(arg['<room_type>'], arg['<room_name>']))
+        # print(arg)
+        self.amity.create_room(arg['<room_type>'], arg['<room_name>'])
 
     @docopt_cmd
     def do_addperson(self, arg):
-        """Usage:addperson -n <person_name> -r <person_role> -a [--accommodate=N] -p <phone_number>"""
-        print(self.amity.add_person(arg['<person_name>'], arg['<person_role>'], arg['<person_accomodation>'],
-                                    arg['<person_phone>']))
+        """Usage: addperson -n <first_name> <last_name> -r <person_role> -a [<want_accomodation>] -p <phone_number>"""
+        # print(arg)
+        person_name = arg['<first_name>'] + arg['<last_name>']
+        self.amity.add_person(person_name, arg['<person_role>'], arg['<want_accomodation>'],
+                                    arg['<phone_number>'])
 
     @docopt_cmd
     def do_edit_person_info(self, arg):
