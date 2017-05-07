@@ -1,14 +1,17 @@
+import uuid
 class Person(object):
-    def __init__(self, person_name,person_accomodation, person_phone):
+    def __init__(self, person_name, person_accomodation, person_phone):
         self.person_name = person_name
         self.person_accomodation = person_accomodation
         self.person_phone = person_phone
+        self.ID = uuid.uuid4()
        
 class Fellow(Person):
     def __init__(self, person_name, person_accomodation, person_phone):
         Person.__init__(self, person_name, person_accomodation, person_phone)
         self.person_role = 'fellow'
         self.room_type = 'livingSpace', 'office'
+
 
 
    

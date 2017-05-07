@@ -1,6 +1,7 @@
 from Room import Room, Office, Livingspace
 from Person import Person, Staff, Fellow
 import random
+from pprint import pprint
 from twilio.rest import Client
 
 # put your own credentials here
@@ -55,7 +56,6 @@ class Amity(object):
         person_role = person_role.lower()
         want_accomodation = want_accomodation.lower()
         if person_role == 'staff':
-            if person_name not in self.all_staff:
                 if want_accomodation == "n":
                     if not phone_number:
                         staff = Staff(person_name, want_accomodation, phone_number)
@@ -91,8 +91,6 @@ class Amity(object):
                                 body='Hello' + staff.person_name + ', ' + 'you have been allocated to '+ room.room_name +' succesfully!!. Amity')
                     else:
                         print('There is no rooms available in Amity. Use the createroom command to create one!')
-            else:
-                print(person_name + " already exist in Amity. Please use the Edit or Delete Command to Modify Entry.")
         if person_role == 'fellow':
             if person_name not in self.all_fellow:
                     if want_accomodation == "n":
@@ -110,12 +108,13 @@ class Amity(object):
                                 body='Hello ' + fellow.person_name + ', ' + 'you have been succesfully added to Amity')
 
                     else:
-                        if self.all_offices and self.all_livingspace:
+                        # if self.all_offices and self.all_livingspace:
+                        if self.all_rooms:
                             if not phone_number:
                                 fellow = Fellow(person_name, want_accomodation, phone_number)
                                 self.all_fellow.append(fellow)
                                 room = random.choice(self.get_available_room(self.all_livingspace))
-                                room.occupants.append(fellow)
+                                room.occupants.append(id(fellow))
                                 print(fellow.person_name + 'has been allocated to' + room.room_name + 'succesfully!!')
                             else:
                                 fellow = Fellow(person_name, want_accomodation, phone_number)
@@ -135,84 +134,94 @@ class Amity(object):
 
     def edit_person_info(self, person_name):
         '''this edits a persons name'''
-        if self.all_people:
+        if person_name in self.all_staff or self.all_fellow:
             if self.all_people.count(person_name) > 1:
-                    value = input('which' + person_name + '? Please Enter their index number')
-                    for a_name in person_name:
-                        if self.all_people.index(a_name) is int(value):
-                            details = input('Enter new the new details about ' + a_name)
-                            self.all_people.replace(person)
-                # else:
-                #     person = Person()
-                #     self.all_people.replace(person)
-
-        if not self.all_people:
-                return 'This entry cannot be found in Amity'
+                value = input('which' + person_name + '? Please Enter their ID number')
+                for a_name in person_name:
+                    if self.all_people.ID(a_name) is int(value):
+                        new_details = input('Enter new the new details about ' + a_name)
+                        self.all_people.replace(new_details)
+        else:
+            print('This entry cannot be found in Amity')
+    def find_userid(self,person_name):
+        if person_name in self.all_staff or self.all_fellow:
+            # for person in person_name:
+            # print(person_name.ID)
+            pprint(vars(person_name))
+        else:
+            print('This person is not in Amity')
     def reallocate_person(self, person_name,room_name):
         '''this reallocates a person to their room of choice'''
-        '''first check is the room is available'''
-        for room in self.available_room:
-            if room.room_name == room_name and room.room_type == 'Office':
-                for person in self.all_people:
-                    if self.all_people.count(person_name) > 1:
-                        value = ('which' + person_name + '? Please Enter their index number')
-                        for a_name in person_name:
-                            if self.all_people.index(a_name) is int(value):
-                                self.all_allocations.remove(a_name)
-                                room_all = a_name.append(room)
-                                self.all_allocations.append(room_all)
-                                return a_name + 'has been relocated to ' + room + 'succesfully!!'
-                            else:
-                                return 'That index number does not exist!'
-                    elif self.all_people.count(person_name) == 1:
-                                self.all_allocations.remove(person)
-                                room_all = person.append(room)
-                                self.all_allocations.append(room_all)
-                                return person.person_name + 'has been relocated to ' + room + 'succesfully!!'
-                else:
-                    return person_name + 'Is not in Amity'
-            elif room.room_name == room_name and room.room_type == 'Livingspace':
-                for person in self.all_fellow:
-                    if self.all_fellow.count(person_name) > 1:
-                        value = ('which' + person_name + '? Please Enter their index number')
-                        for a_name in person_name:
-                            if self.all_fellow.index(a_name) is int(value):
-                                self.all_allocations.remove(a_name)
-                                room_all = a_name.append(room)
-                                self.all_allocations.append(room_all)
-                                return a_name + 'has been relocated to ' + room + 'succesfully!!'
-                            else:
-                                return 'That index number does not exist!'
-                    elif self.all_fellow.count(person_name) == 1:
-                                self.all_allocations.remove(person)
-                                room_all = person.append(room)
-                                self.all_allocations.append(room_all)
-                                return person.person_name + 'has been relocated to ' + room + 'succesfully!!'
-                else:
-                    return person_name + 'Is not in Amity'
+        room_names = [room.room_name for room in self.all_offices if len(room_name.occupants) < room_name.max_no_occupants]
+        if person_name in Room.occupants:
+            if room_name in room_names:
+                Room.occupants.person_name[room_name] = room_name
             else:
-                return room_name + 'is not available for reallocation'
+                print(room_name + 'is not avalible for reallocation. Please try another room')
+        else:
+            print(person_name + ' does not exist in Amity')
+
+        # for room in self.available_room:
+        #     if room.room_name == room_name and room.room_type == 'Office':
+        #         for person in self.all_people:
+        #             if self.all_people.count(person_name) > 1:
+        #                 value = ('which' + person_name + '? Please Enter their index number')
+        #                 for a_name in person_name:
+        #                     if self.all_people.index(a_name) is int(value):
+        #                         self.all_allocations.remove(a_name)
+        #                         room_all = a_name.append(room)
+        #                         self.all_allocations.append(room_all)
+        #                         return a_name + 'has been relocated to ' + room + 'succesfully!!'
+        #                     else:
+        #                         return 'That index number does not exist!'
+        #             elif self.all_people.count(person_name) == 1:
+        #                         self.all_allocations.remove(person)
+        #                         room_all = person.append(room)
+        #                         self.all_allocations.append(room_all)
+        #                         return person.person_name + 'has been relocated to ' + room + 'succesfully!!'
+        #         else:
+        #             return person_name + 'Is not in Amity'
+        #     elif room.room_name == room_name and room.room_type == 'Livingspace':
+        #         for person in self.all_fellow:
+        #             if self.all_fellow.count(person_name) > 1:
+        #                 value = ('which' + person_name + '? Please Enter their index number')
+        #                 for a_name in person_name:
+        #                     if self.all_fellow.index(a_name) is int(value):
+        #                         self.all_allocations.remove(a_name)
+        #                         room_all = a_name.append(room)
+        #                         self.all_allocations.append(room_all)
+        #                         return a_name + 'has been relocated to ' + room + 'succesfully!!'
+        #                     else:
+        #                         return 'That index number does not exist!'
+        #             elif self.all_fellow.count(person_name) == 1:
+        #                         self.all_allocations.remove(person)
+        #                         room_all = person.append(room)
+        #                         self.all_allocations.append(room_all)
+        #                         return person.person_name + 'has been relocated to ' + room + 'succesfully!!'
+        #         else:
+        #             return person_name + 'Is not in Amity'
+        #     else:
+        #         return room_name + 'is not available for reallocation'
 
     def allocate_unallocated_person(self, person_name):
         ''' this allocates a student who didnt want accomodation but would like accomodation now, a living space'''
-        for person in self.all_people:
-            if person.person_name == person_name:
-                if person.person_role == 'staff' and person.person_accomodation == 'n':
-                    if self.get_available_room() == True:
-                        person.person_accomodation = 'Y'
-                        room = random.choice(get_available_room(self.all_offices))
+        if person_name in self.all_staff or self.all_fellow:
+            if Person.person_role == 'staff' and Person.want_accomodation == 'n':
+                if self.get_available_room(self.all_offices) == True:
+                        person_accomodation = 'y'
+                        room = random.choice(self.get_available_room(self.all_offices))
                         room.occupants.append(person)
                         print(person_name + 'has been allocated succesfully to ' + room)
-                    else:
-                        print('There is no room in Amity to allocate this person!')
-                elif person.person_role == 'fellow' and person.person_accomodation == 'n':
-                        if self.check_available_rooms() == True:
-                            person.person_accomodation = 'y'
-                            room = random.choice(get_available_room(self.all_rooms))
-                            room.occupants.append(person)
-                            print(person_name + 'has been allocated succesfully to ' + room)
-                        else:
-                            print('There is no room in Amity to allocate this person!')
+                else:
+                    print('There is no room in Amity to allocate this person!')
+            elif Person.person_role == 'fellow' and Person.want_accomodation == 'n':
+                if self.get_available_room(self.all_livingspace) == True:
+                        Person.want_accomodation = 'y'
+                        room = random.choice(self.get_available_room(self.all_livingspace))
+                        room.occupants.append(person)
+                        print(person_name + 'has been allocated succesfully to ' + room)
+                else:
+                    print('There is no room in Amity to allocate this person!')
 
             else:
                 print('This person does not exist in Amity')
@@ -220,84 +229,81 @@ class Amity(object):
 
     def Delete_person(self, person_name):
         ''' this deletes a person from the system'''
-        if self.all_people:
+        if person_name in self.all_rooms:
                 if len(person_name) > 1:
-                    value = ('which' + person_name + '? Please Enter their index number')
+                    value = ('which' + person_name + '? Please Enter their ID number')
                     for a_name in person_name:
-                        if self.all_people.index(a_name) is int(value):
+                        if self.all_people.ID(a_name) is int(value):
                             self.all_people.remove(a_name)
                             print(a_name + 'has been deleted succesfully!!')
                 else:
                     self.all_people.remove(person_name)
                     return person_name + 'has been removed succesfully!!'
-        if not self.all_people:
-                return 'This entry cannot be found in Amity'
+        else:
+            print('This entry cannot be found in Amity')
 
-        pass
-    # def loadpeople(self, filename):
-    #     '''loads people from text file filename.txt'''
-    #     person_details = open(filename, 'r')
-    #     for info in person_details:
-    #         self.all_people.append(info.strip())
-    #         if person_role == "STAFF":
-    #             staff = Staff(person_name, person_role, person_accomodation, person_phone)
-    #             if person_accomodation == "N" or "":
-    #                 self.all_people.append(info.strip())
-    #             else:
-    #
-    #             self.all_people.append(info.strip())
+    def loadpeople(self, filename):
+        '''loads people from text file filename.txt'''
+        person_details = open(filename, 'r')
+        for info in person_details:
+            pass
 
-    def printallocation(self):
+    def printallocations(self):
         '''prints office and livingspace  allocation for fellows and staff
             you can also choose to optionally save them to a text file'''
+        if self.all_rooms:
+            print str(Room.occupants).strip('[]')
+        else:
+            print('There are no rooms in Amity')
 
-        pass
     def printunallocated(self):
         '''prints fellows and staff who have not been allocated to rooms
             you can also choose to optionally save them to a text file'''
-        pass
+        if self.all_people:
+            for name in self.all_people:
+                if name.want_accomodation == 'n':
+                    print('name')
+        else:
+            print('There is are no people entered into Amity')
     def printroom(self, room_name):
         ''' this prints the members of a room once a name is given'''
-        pass
+        if self.all_rooms:
+            if room_name in self.all_rooms:
+                print str(room_name.occupants).strip('[]')
+        else:
+            print('This room does not exist in Amity')
+
     def savestate(self, db_name):
         ''' this saves all the information to an sqlite db '''
         pass
     def loadstate(self, db_name):
         ''' this loads all the data from an sqlite db into the application '''
         pass
-    def edit_room_info(self, entry):
+    def edit_room_info(self, room_name):
         ''' this edits a room type from both db and list'''
-        if self.all_rooms:
-            if len(entry) > 1:
-                value = ('which' + entry + '? Please Enter their index number')
-                for a_room in entry:
-                    if self.all_rooms.index(a_room) is int(value):
-                        room = Room()
-                        self.all_rooms.replace(room)
-                        return entry + 'has been edited succesfully!!'
-            else:
-                room = Room()
-                self.all_rooms.replace(room)
-                return entry + 'has been edited succesfully'
+        if room_name in self.all_rooms:
+            new_details = input('Enter the New details')
+            self.all_rooms.replace(new_details)
+            print('This room information has been edited succesfully')
 
         if not self.all_rooms:
             return 'This entry cannot be found in Amity'
 
-    def Delete_a_room(self, entry):
+    def Delete_a_room(self, room_name):
         '''this deletes a room from the Amity '''
-        if self.all_rooms:
-                if len(entry) > 1:
-                    value = ('which' + entry + '? Please Enter their index number')
-                    for a_room in entry:
-                        if self.all_rooms.index(a_room) is int(value):
-                            self.all_people.remove(a_room)
-                            return a_room + 'has been deleted succesfully!!'
+        if room_name in self.all_rooms:
+            if self.all_rooms.count(room_name) > 1:
+                value = ('which' + room_name + '? Please Enter their index number')
+                for a_room in room_name:
+                    if self.all_rooms.index(a_room) is int(value):
+                        self.all_people.remove(a_room)
+                        print(a_room + 'has been deleted succesfully!!')
                 else:
-                    self.all_people.remove(entry)
-                    return entry + 'has been deleted succesfully'
+                    self.all_people.remove(room_name)
+                    print(room_name + 'has been deleted succesfully')
 
-        if not self.all_rooms:
-                return 'This entry cannot be found in Amity'
+        else:
+            return 'This entry cannot be found in Amity'
 
          
    

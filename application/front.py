@@ -87,7 +87,7 @@ class FrontAmity(cmd.Cmd):
 
     @docopt_cmd
     def do_addperson(self, arg):
-        """Usage: addperson -n <first_name> <last_name> -r <person_role> -a [<want_accomodation>] -p <phone_number>"""
+        """Usage: addperson -n <first_name> [<last_name>] -r <person_role> -a [<want_accomodation>] -p <phone_number>"""
         # print(arg)
         person_name = arg['<first_name>'] + arg['<last_name>']
         self.amity.add_person(person_name, arg['<person_role>'], arg['<want_accomodation>'],
@@ -97,6 +97,12 @@ class FrontAmity(cmd.Cmd):
     def do_edit_person_info(self, arg):
         """Usage:editpersoninfo <entry> """
         print(self.amity.edit_person_name(arg['entry']))
+
+    @docopt_cmd
+    def do_finduserid(self, arg):
+        '''Usage: finduserid -n <first_name> [<last_name>]'''
+        person_name = arg['<first_name>'] + arg['<last_name>']
+        self.amity.find_userid(person_name)
 
     @docopt_cmd
     def do_editroom(self, arg):
@@ -122,7 +128,8 @@ class FrontAmity(cmd.Cmd):
         pass
     @docopt_cmd
     def do_printallocations(self, arg):
-        pass
+        '''Usage: printallocations'''
+        self.amity.printallocation()
     @docopt_cmd
     def do_printunallocated(self, arg):
         pass
