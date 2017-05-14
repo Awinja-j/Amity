@@ -1,29 +1,20 @@
 #!venv/bin/python
 """
-
 Usage:
-front.py createroom -t <roomtype> -n <name>...                          creates room in Amity
-front.py editroom      <edit_room>                                      Edits room
-front.py edit_room_type <editroom_type>
-front.py Delete_room <DeleteRoom>
-front.py addperson -n <first_name> <last_name> -r <person_role> -a [--accommodate=N] -p <phone_number>   Adds person to Amity 
-front.py Edit_person_name <first_name> <last_name>
-front.py Edit_person_info <name>
-front.py delete_person <name>
-front.py reallocate_person <first_name> <last_name> <new_room_name>     reallocates person in Amity
-front.py load_people
-front.py print_allocations [--o=file_name]
-front.py print_unallocated [--o=file_name]
-front.py print_room <room_name>
-front.py allocate_livingspace <first_name> <last_name>
-front.py save_state [--db=sqlite_database]
-front.py load_state <sqlite_database>
-front.py quit
-front.py reset
-front.py clear
-front.py restart
-front.py (-i | --interactive)
-front.py (-h | --help)
+Amity>> create_room <roomtype> <name>...                                                           
+Amity>> add_person <first_name> <last_name> <person_role> [--accommodate=N] [<phone_number>]   
+Amity>> find_userid <first_name> <last_name>                                                       
+Amity>> reallocate_person <person_ID> <room_name>                                               
+Amity>> load_people <filename>
+Amity>> print_allocations [--o=file_name]
+Amity>> print_unallocated [--o=file_name]
+Amity>> print_room <room_name>
+Amity>> save_state [--db=<sqlite_database>]
+Amity>> load_state [--db=<sqlite_database>]
+Amity>> quit
+Amity>> (-i | --interactive)
+Amity>> (-h | --help)
+
 Options:
     -i, --interactive  Interactive Mode
     -h, --help  Show this screen and exit.
@@ -35,6 +26,7 @@ from colorama import init
 init(strip=not sys.stdout.isatty())
 from docopt import docopt, DocoptExit
 from Amity import Amity
+from db_conn import DbManager
 from termcolor import cprint
 from pyfiglet import figlet_format
 
@@ -71,108 +63,75 @@ def docopt_cmd(func):
 
 
 class FrontAmity(cmd.Cmd):
-    text = "Amity"
-    cprint(figlet_format(text, font="basic"), "white")
-    intro = " Welcome to Amity"
+    header = "  A M I T Y  "
+    cprint(figlet_format(header, font="starwars"), "green")
+    intro = """
+      THE SPACE ALLOCATOR OF YOUR DREAMS   """
+    cprint(figlet_format(intro, font='digital'), "white")
+
     prompt = 'Amity>> '
     file = None
     amity = Amity()
+    dbmanager = DbManager()
+
 
     @docopt_cmd
-    def do_createroom(self, arg):
-        """Usage: createroom -t <room_type> -n <room_name>..."""
-        # print(self.amity.create_room(arg['<room_type>'], arg['<room_name>']))
-        # print(arg)
+    def do_create_room(self, arg):
+        """Usage: create_room <room_type> <room_name>..."""
         self.amity.create_room(arg['<room_type>'], arg['<room_name>'])
 
     @docopt_cmd
-    def do_addperson(self, arg):
-        """Usage: addperson -n <first_name> [<last_name>] -r <person_role> -a [<want_accomodation>] -p <phone_number>"""
-        # print(arg)
-        person_name = arg['<first_name>'] + arg['<last_name>']
-        self.amity.add_person(person_name, arg['<person_role>'], arg['<want_accomodation>'],
-                                    arg['<phone_number>'])
+    def do_add_person(self, arg):
+        """Usage: add_person <first_name> <last_name> <person_role> [--p=<phone_number>] [--a=<want_accomodation>]"""
+        person_name = arg['<first_name>'] + ' ' + arg['<last_name>']
+        if not arg['--p']:
+            phone_number = ''
+        else:
+            phone_number = arg['--p']
+        if arg['--a'] == None:
+            want_accomodation = 'n'
+        else:
+            want_accomodation = str(arg['--a'])
+        person_role = arg['<person_role>']
+        self.amity.add_person(person_name, person_role, phone_number, want_accomodation)
 
     @docopt_cmd
-    def do_edit_person_info(self, arg):
-        """Usage:editpersoninfo <entry> """
-        print(self.amity.edit_person_name(arg['entry']))
-
-    @docopt_cmd
-    def do_finduserid(self, arg):
-        '''Usage: finduserid -n <first_name> [<last_name>]'''
-        person_name = arg['<first_name>'] + arg['<last_name>']
+    def do_find_userid(self, arg):
+        """Usage: find_userid <first_name> <last_name>"""
+        person_name = arg['<first_name>'] + ' ' + arg['<last_name>']
         self.amity.find_userid(person_name)
-
     @docopt_cmd
-    def do_editroom(self, arg):
-        """Usage:"""
-        pass
+    def do_reallocate_person(self, arg):
+        """Usage: reallocate_person <person_ID> <room_name>"""
+        self.amity.reallocate_person(arg['<person_ID>'], arg['<room_name>'])
     @docopt_cmd
-    def do_editroomtype(self, arg):
-        pass
+    def do_load_people(self, arg):
+        """Usage: load_people <filename>"""
+        self.amity.load_people(arg['<filename>'])
     @docopt_cmd
-    def do_Deleteroom(self, arg):
-        pass
+    def do_print_allocations(self, args):
+        '''Usage: print_allocations [--o=filename]'''
+        self.amity.print_allocations(args)
     @docopt_cmd
-    def do_editpersoninfo(self, arg):
-        pass
+    def do_print_unallocated(self,args):
+        """Usage: print_unallocated [--o=filename]"""
+        self.amity.print_unallocated(args)
     @docopt_cmd
-    def do_Deleteperson(self, arg):
-        pass
+    def do_print_room(self, arg):
+        """Usage: print_room <room_name>"""
+        self.amity.print_room(arg['<room_name>'])
     @docopt_cmd
-    def do_reallocateperson(self, arg):
-        pass
+    def do_save_state(self, args):
+        """Usage: save_state [--db=<sqlite_database>]"""
+        print(args)
+        self.dbmanager.save_state(args)
     @docopt_cmd
-    def do_loadpeople(self, arg):
-        pass
-    @docopt_cmd
-    def do_printallocations(self, arg):
-        '''Usage: printallocations'''
-        self.amity.printallocation()
-    @docopt_cmd
-    def do_printunallocated(self, arg):
-        pass
-    @docopt_cmd
-    def do_printroom(self, arg):
-        pass
-    @docopt_cmd
-    def do_allocatelivingspace(self, arg):
-        pass
-    @docopt_cmd
-    def do_savestate(self, arg):
-        pass
-    @docopt_cmd
-    def do_loadstate(self, arg):
-        pass
-    @docopt_cmd
-    def do_quit(self, arg):
-        pass
-    @docopt_cmd
-    def do_reset(self, arg):
-        pass
-    @docopt_cmd
-    def do_clear(self, arg):
-        pass
-    @docopt_cmd
-    def do_restart(self, arg):
-        pass
-
-    @docopt_cmd
-    def do_search(self, args):
-        """Usage: Searches <name>"""
-        full_name = args['<name>']
-        print(c_manager.search(full_name))
-
-    @docopt_cmd
-    def do_text(self, args):
-        """Usage: text <name> -m <message>..."""
-        name = args['<name>']
-        message = " ".join(args['<message>'])
-        print(c_manager.text(name, message))
+    def do_load_state(self, args):
+        """Usage: load_state [--db=<sqlite_database>]"""
+        self.dbmanager.load_state(args)
 
     def do_quit(self, arg):
-        """quit"""
+        """Usage: quit"""
         print('System closed.')
         exit()
 
