@@ -2,7 +2,7 @@
 """
 Usage:
 Amity>> create_room <roomtype> <name>...                                                           
-Amity>> add_person <first_name> <last_name> <person_role> [--accommodate=N] [<phone_number>]   
+Amity>> add_person <first_name> <last_name> <person_role> [--accommodate=N]   
 Amity>> find_userid <first_name> <last_name>                                                       
 Amity>> reallocate_person <person_ID> <room_name>                                               
 Amity>> load_people <filename>
@@ -72,38 +72,33 @@ class FrontAmity(cmd.Cmd):
     prompt = 'Amity>> '
     file = None
     amity = Amity()
-    dbmanager = DbManager()
 
 
     @docopt_cmd
     def do_create_room(self, arg):
         """Usage: create_room <room_type> <room_name>..."""
-        self.amity.create_room(arg['<room_type>'], arg['<room_name>'])
+        print(self.amity.create_room(arg['<room_type>'], arg['<room_name>']))
 
     @docopt_cmd
     def do_add_person(self, arg):
-        """Usage: add_person <first_name> <last_name> <person_role> [--p=<phone_number>] [--a=<want_accomodation>]"""
+        """Usage: add_person <first_name> <last_name> <person_role> [--a=<want_accomodation>]"""
         person_name = arg['<first_name>'] + ' ' + arg['<last_name>']
-        if not arg['--p']:
-            phone_number = ''
-        else:
-            phone_number = arg['--p']
         if arg['--a'] == None:
             want_accomodation = 'n'
         else:
             want_accomodation = str(arg['--a'])
         person_role = arg['<person_role>']
-        self.amity.add_person(person_name, person_role, phone_number, want_accomodation)
+        print(self.amity.add_person(person_name, person_role,want_accomodation))
 
     @docopt_cmd
     def do_find_userid(self, arg):
         """Usage: find_userid <first_name> <last_name>"""
         person_name = arg['<first_name>'] + ' ' + arg['<last_name>']
-        self.amity.find_userid(person_name)
+        print(self.amity.find_userid(person_name))
     @docopt_cmd
     def do_reallocate_person(self, arg):
         """Usage: reallocate_person <person_ID> <room_name>"""
-        self.amity.reallocate_person(arg['<person_ID>'], arg['<room_name>'])
+        print(self.amity.reallocate_person(int(arg['<person_ID>']), arg['<room_name>']))
     @docopt_cmd
     def do_load_people(self, arg):
         """Usage: load_people <filename>"""
@@ -111,24 +106,24 @@ class FrontAmity(cmd.Cmd):
     @docopt_cmd
     def do_print_allocations(self, args):
         '''Usage: print_allocations [--o=filename]'''
-        self.amity.print_allocations(args)
+        print(self.amity.print_allocations(args))
     @docopt_cmd
     def do_print_unallocated(self,args):
         """Usage: print_unallocated [--o=filename]"""
-        self.amity.print_unallocated(args)
+        print(self.amity.print_unallocated(args))
     @docopt_cmd
     def do_print_room(self, arg):
         """Usage: print_room <room_name>"""
-        self.amity.print_room(arg['<room_name>'])
+        print(self.amity.print_room(arg['<room_name>']))
     @docopt_cmd
     def do_save_state(self, args):
         """Usage: save_state [--db=<sqlite_database>]"""
         print(args)
-        self.dbmanager.save_state(args)
+        self.amity.save_state(args)
     @docopt_cmd
     def do_load_state(self, args):
         """Usage: load_state [--db=<sqlite_database>]"""
-        self.dbmanager.load_state(args)
+        self.amity.load_state(args)
 
     def do_quit(self, arg):
         """Usage: quit"""

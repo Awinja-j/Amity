@@ -1,7 +1,10 @@
+import random
 class Room(object):
         def __init__(self, room_name):
             self.room_name = room_name
             self.occupants =[]
+            pin = random.randint(999, 9999)
+            self.room_ID = pin
 
 
 class Livingspace(Room):
@@ -11,7 +14,7 @@ class Livingspace(Room):
             self.room_type = 'livingspace'
 
         def __repr__(self):
-            return self.room_name, self.occupants
+            return self.room_name
 
             
 class Office(Room):
@@ -21,5 +24,5 @@ class Office(Room):
            self.room_type = 'office'
 
         def __repr__(self):
-            return self.room_name, self.occupants
+            return self.room_name
     
