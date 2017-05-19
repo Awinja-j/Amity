@@ -7,8 +7,8 @@ class Person(object):
         self.person_ID = pin
        
 class Fellow(Person):
-    def __init__(self, person_name,want_accomodation):
-        Person.__init__(self, person_name,want_accomodation)
+    def __init__(self, person_name, want_accomodation):
+        Person.__init__(self, person_name, want_accomodation)
         self.person_role = 'fellow'
         self.room_type = 'livingSpace', 'office'
 
@@ -19,10 +19,11 @@ class Fellow(Person):
 
    
 class Staff(Person):
-    def __init__(self, person_name,want_accomodation):
-        Person.__init__(self, person_name,want_accomodation)
+    def __init__(self, person_name, want_accomodation):
+        Person.__init__(self, person_name, want_accomodation)
         self.person_role = 'staff'
         self.room_type = 'office'
+        # self.want_accomodation = 'n'
 
     def __repr__(self):
         return self.person_name

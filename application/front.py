@@ -26,7 +26,6 @@ from colorama import init
 init(strip=not sys.stdout.isatty())
 from docopt import docopt, DocoptExit
 from Amity import Amity
-from db_conn import DbManager
 from termcolor import cprint
 from pyfiglet import figlet_format
 
@@ -102,7 +101,7 @@ class FrontAmity(cmd.Cmd):
     @docopt_cmd
     def do_load_people(self, arg):
         """Usage: load_people <filename>"""
-        self.amity.load_people(arg['<filename>'])
+        print(self.amity.load_people(arg['<filename>']))
     @docopt_cmd
     def do_print_allocations(self, args):
         '''Usage: print_allocations [--o=filename]'''
@@ -119,11 +118,11 @@ class FrontAmity(cmd.Cmd):
     def do_save_state(self, args):
         """Usage: save_state [--db=<sqlite_database>]"""
         print(args)
-        self.amity.save_state(args)
+        print(self.amity.save_state(args))
     @docopt_cmd
     def do_load_state(self, args):
         """Usage: load_state [--db=<sqlite_database>]"""
-        self.amity.load_state(args)
+        print(self.amity.load_state(args))
 
     def do_quit(self, arg):
         """Usage: quit"""
