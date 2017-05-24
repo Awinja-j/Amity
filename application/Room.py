@@ -1,5 +1,10 @@
 import random
+from abc import ABCMeta, abstractmethod
+
 class Room(object):
+        __metaclass__ = ABCMeta
+
+        @abstractmethod
         def __init__(self, room_name):
             self.room_name = room_name
             self.occupants =[]
@@ -8,6 +13,7 @@ class Room(object):
 
 
 class Livingspace(Room):
+
         def __init__(self, room_name):
             Room.__init__(self, room_name)
             self.max_no_occupants = 6
@@ -18,6 +24,7 @@ class Livingspace(Room):
 
             
 class Office(Room):
+
         def __init__(self, room_name):
            Room.__init__(self, room_name)
            self.max_no_occupants = 4

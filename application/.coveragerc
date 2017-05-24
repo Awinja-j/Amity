@@ -5,8 +5,6 @@ branch = True
 [report]
 # Regexes for lines to exclude from consideration
 
-omit = sqlite3/__init__.py
-       sqlite3/dbapi2.py
 
 exclude_lines =
     # Have to re-enable the standard pragma
@@ -19,6 +17,10 @@ exclude_lines =
     # Don't complain if tests don't hit defensive assertion code:
     raise AssertionError
     raise NotImplementedError
+
+    #sqlite files
+    sqlite3/__init__.py
+    sqlite3/dbapi2.py
 
     # Don't complain if non-runnable code isn't run:
     if 0:

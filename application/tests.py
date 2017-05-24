@@ -45,7 +45,8 @@ class TestAmity(unittest.TestCase):
 
        ''' this tests succesfull creation of staff with No accomodation status '''
        self.assertEqual(self.amity.add_person("Fredrick Omukunda", "Staff", ' '), "fredrick omukunda has succesfully been added to Amity but will be allocated a room one becomes available")
-
+       '''this tests adding a digit as person name'''
+       self.assertEqual(self.amity.add_person('1 2','staff', ''), "person name cannot contain a digit!")
     def test_add_person_wrong_role_type(self):
         self.amity.add_person("James Nyakenyanya", "jelly", "N")
         self.assertTrue('This person role is invalid!')

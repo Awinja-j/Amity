@@ -1,4 +1,5 @@
 import random
+
 class Person(object):
     def __init__(self, person_name, want_accomodation):
         self.person_name = person_name

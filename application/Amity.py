@@ -1,9 +1,11 @@
-from Room import Room, Office, Livingspace
-from Person import Person, Staff, Fellow
+import os
 import random
 import sqlite3
 from os import sys, path
-import os
+from Room import Room, Office, Livingspace
+from Person import Person, Staff, Fellow
+
+
 
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
@@ -20,7 +22,7 @@ class Amity(object):
         self.all_rooms = []
         self.awaiting_allocation = []
 
-    def get_available_room(self, arg):
+    def get_available_rooms(self, arg):
         room_list = [key for key in arg
                      if len(key.occupants) < key.max_no_occupants]
         return room_list
@@ -36,7 +38,7 @@ class Amity(object):
                     if person.person_role == 'staff':
 
                         try:
-                            room = random.choice(self.get_available_room(self.all_offices))
+                            office = random.choice(self.get_available_rooms(self.all_offices))
                         except IndexError:
                             self.awaiting_allocation.append(person)
                             print ('Please add more than one room to ease up allocation.')
@@ -44,18 +46,18 @@ class Amity(object):
                         else:
                             self.all_staff.append(person)
                             self.all_people.append(person)
-                            room.occupants.append(person)
+                            office.occupants.append(person)
                             self.awaiting_allocation.remove(person)
                             print ("")
-                            print('{} has been allocated to {} succesfully!!'.format(person.person_name,room.room_name))
+                            print('{} has been allocated to {} succesfully!!'.format(person.person_name,office.room_name))
 
 
                     else:
                         if self.all_offices and self.all_livingspace:
 
                             try:
-                                room = random.choice(self.get_available_room(self.all_livingspace))
-                                room1 = random.choice(self.get_available_room(self.all_offices))
+                                office = random.choice(self.get_available_rooms(self.all_livingspace))
+                                livingspace = random.choice(self.get_available_rooms(self.all_offices))
                             except IndexError:
                                 self.awaiting_allocation.append(person)
                                 print ("")
@@ -65,15 +67,15 @@ class Amity(object):
                             else:
                                 self.all_fellow.append(person)
                                 self.all_people.append(person)
-                                room1.occupants.append(person)
-                                room.occupants.append(person)
+                                livingspace.occupants.append(person)
+                                office.occupants.append(person)
                                 self.awaiting_allocation.remove(person)
                                 print ("")
-                                print ('{}  has been allocated to {}  and {} succesfully!!'.format(person.person_name, room.room_name, room1.room_name))
+                                print ('{}  has been allocated to {}  and {} succesfully!!'.format(person.person_name, office.room_name, livingspace.room_name))
 
 
 
-    def create_room(self, room_type, room_name):
+    def create_room(self, room_type, room_names):
         room_type = room_type.lower()
         offices = [room.room_name for room in self.all_offices]
         livingspaces = [room.room_name for room in self.all_livingspace]
@@ -82,7 +84,7 @@ class Amity(object):
             print ("")
             return 'This room type is invalid!!'
         else:
-            for name in room_name:
+            for name in room_names:
                 if name in rooms:
                     print ("")
                     print '{} already exists in Amity'.format(name)
@@ -112,6 +114,9 @@ class Amity(object):
         person_name = person_name.lower()
         person_role = person_role.lower()
         want_accomodation = want_accomodation.lower()
+        for character in person_name:
+            if character.isdigit():
+                return 'person name cannot contain a digit!'
         if person_role not in ['staff', 'fellow']:
             print ("")
             return ('This person role is invalid!')
@@ -125,7 +130,7 @@ class Amity(object):
                     if self.all_offices:
                         staff = Staff(person_name, want_accomodation == 'n')
                         try:
-                            room = random.choice(self.get_available_room(self.all_offices))
+                            office = random.choice(self.get_available_rooms(self.all_offices))
 
                         except IndexError:
                             self.awaiting_allocation.append(staff)
@@ -135,10 +140,10 @@ class Amity(object):
                         else:
                             self.all_staff.append(staff)
                             self.all_people.append(staff)
-                            room.occupants.append(staff)
+                            office.occupants.append(staff)
                             print ("")
                             return '{} has been added to Amity and has been allocated to {} succesfully!!'.format(
-                                staff.person_name, room.room_name)
+                                staff.person_name, office.room_name)
                     else:
                         staff = Staff(person_name, want_accomodation == 'n')
                         self.awaiting_allocation.append(staff)
@@ -151,7 +156,7 @@ class Amity(object):
                         if self.all_offices:
                             fellow = Fellow(person_name, want_accomodation)
                             try:
-                                room = random.choice(self.get_available_room(self.all_offices))
+                                office = random.choice(self.get_available_rooms(self.all_offices))
                             except IndexError:
                                 self.awaiting_allocation.append(fellow)
                                 print ("")
@@ -160,9 +165,9 @@ class Amity(object):
                             else:
                                 self.all_fellow.append(fellow)
                                 self.all_people.append(fellow)
-                                room.occupants.append(fellow)
+                                office.occupants.append(fellow)
                                 print("")
-                                return '{} has been added to Amity and has been allocated to {} succesfully!!'.format(fellow.person_name, room.room_name)
+                                return '{} has been added to Amity and has been allocated to {} succesfully!!'.format(fellow.person_name, office.room_name)
                         else:
                             fellow = Fellow(person_name, want_accomodation)
                             self.awaiting_allocation.append(fellow)
@@ -172,8 +177,8 @@ class Amity(object):
                         if (self.all_offices) and (self.all_livingspace):
                             fellow = Fellow(person_name, want_accomodation)
                             try:
-                                room = random.choice(self.get_available_room(self.all_livingspace))
-                                room1 = random.choice(self.get_available_room(self.all_offices))
+                                office = random.choice(self.get_available_rooms(self.all_livingspace))
+                                livingspace = random.choice(self.get_available_rooms(self.all_offices))
                             except IndexError:
                                 self.awaiting_allocation.append(fellow)
                                 print ("")
@@ -182,10 +187,10 @@ class Amity(object):
                             else:
                                 self.all_fellow.append(fellow)
                                 self.all_people.append(fellow)
-                                room1.occupants.append(fellow)
-                                room.occupants.append(fellow)
+                                livingspace.occupants.append(fellow)
+                                office.occupants.append(fellow)
                                 print ("")
-                                return '{} has been allocated to {} and {} succesfully!!'.format(fellow.person_name, room.room_name, room1.room_name)
+                                return '{} has been allocated to {} and {} succesfully!!'.format(fellow.person_name, office.room_name, livingspace.room_name)
                         else:
                             fellow = Fellow(person_name, want_accomodation)
                             self.awaiting_allocation.append(fellow)
@@ -193,13 +198,13 @@ class Amity(object):
                             return '{} has succesfully been added to Amity but will be allocated a room one becomes available'.format(fellow.person_name)
 
 
-    def find_userid(self, person_name):
-        Person_name = person_name.lower()
+    def found_userid(self, person_name):
+        person_name = person_name.lower()
 
         one = None
 
         for person in self.all_people:
-            if person.person_name == Person_name:
+            if person.person_name == person_name:
                 one = person
 
         if one is None:
@@ -228,7 +233,7 @@ class Amity(object):
         if new_room is None:
             return ('This room does not exist in Amity')
 
-        if new_room not in self.get_available_room(self.all_rooms):
+        if new_room not in self.get_available_rooms(self.all_rooms):
             print('This room has no space to reallocate')
             return('This room has no space to reallocate')
 
@@ -237,7 +242,7 @@ class Amity(object):
                 print('Staff cannot be allocated to a livingspace')
                 return('Staff cannot be allocated to a livingspace')
             else:
-                vacant_rooms = self.get_available_room(self.all_offices)
+                vacant_rooms = self.get_available_rooms(self.all_offices)
                 for room in vacant_rooms:
                     if person_moving.person_ID in [person.person_ID for person in room.occupants]:
                         if new_room == room:
@@ -254,7 +259,7 @@ class Amity(object):
 
         else:
             if new_room.room_type == 'livingspace':
-                vacant_rooms = self.get_available_room(self.all_livingspace)
+                vacant_rooms = self.get_available_rooms(self.all_livingspace)
                 for room in vacant_rooms:
                     if person_moving.person_ID in [person.person_ID for person in room.occupants]:
                         if new_room == room:
@@ -268,7 +273,7 @@ class Amity(object):
                             print ('{} has been reallocated to  {} succesfully!!'.format(person_moving.person_name, new_room))
 
             elif new_room.room_type == 'office':
-                vacant_rooms = self.get_available_room(self.all_offices)
+                vacant_rooms = self.get_available_rooms(self.all_offices)
                 for room in vacant_rooms:
                     if person_moving.person_ID in [person.person_ID for person in room.occupants]:
                         if new_room == room:
@@ -287,12 +292,12 @@ class Amity(object):
     def load_people(self, filename):
         '''loads people from text file filename.txt'''
         try:
-            person = open(filename, "r")
-            for a_name in person.readlines():
-                person_name = a_name.split()[0].lower() + " " + a_name.split()[1].lower()
-                person_role = a_name.split()[2].lower()
-                if len(a_name.split()) == 4:
-                    want_accomodation = a_name.split()[3].lower()
+            people = open(filename, "r")
+            for person in people.readlines():
+                person_name = person.split()[0].lower() + " " + person.split()[1].lower()
+                person_role = person.split()[2].lower()
+                if len(person.split()) == 4:
+                    want_accomodation = person.split()[3].lower()
                 else:
                     want_accomodation = "n"
 
@@ -312,12 +317,12 @@ class Amity(object):
             if len(self.all_livingspace) < 1:
                 print ("There are no livingspaces yet")
             else:
-                for rooms in self.all_livingspace:
-                    if len(rooms.occupants) > 0:
+                for room in self.all_livingspace:
+                    if len(room.occupants) > 0:
                         print('----------------------------')
-                        print('Livingspace {} is occupied by: '.format(rooms.room_name) )
+                        print('Livingspace {} is occupied by: '.format(room.room_name) )
                         print('----------------------------')
-                        for occupant in rooms.occupants:
+                        for occupant in room.occupants:
                             members = ''
                             members += ('\n {}'.format(occupant.person_name))
                             print(members)
@@ -326,12 +331,12 @@ class Amity(object):
             if len(self.all_offices) < 1:
                 print("There are no offices yet")
             else:
-                for rooms in self.all_offices:
-                    if len(rooms.occupants) > 0:
+                for room in self.all_offices:
+                    if len(room.occupants) > 0:
                         print('----------------------------')
-                        print('Offices {} is occupied by: '.format(rooms.room_name))
+                        print('Offices {} is occupied by: '.format(room.room_name))
                         print('----------------------------')
-                        for occupant in rooms.occupants:
+                        for occupant in room.occupants:
                             members = ''
                             members += ('\n {}'.format(occupant.person_name))
                             print(members)
@@ -343,23 +348,23 @@ class Amity(object):
             if filename.endswith(".txt") is False:
                 filename += ".txt"
             with open(filename, "wt") as textfile:
-                for rooms in self.all_livingspace:
-                    if len(rooms.occupants) > 0:
+                for room in self.all_livingspace:
+                    if len(room.occupants) > 0:
                         textfile.write("\n" + '----------------------------' + "\n")
-                        textfile.write('Livingspace ' + rooms.room_name  + ' is occupied by:' )
+                        textfile.write('Livingspace ' + room.room_name  + ' is occupied by:' )
                         textfile.write("\n" + '----------------------------' + "\n")
-                        for occupant in rooms.occupants:
+                        for occupant in room.occupants:
                             members = ''
                             members += ('\n {}'.format( occupant.person_name))
                             textfile.write(members)
                             textfile.write("\n" + '----------------------------' + "\n")
-                for rooms in self.all_offices:
-                    if len(rooms.occupants) > 0:
+                for room in self.all_offices:
+                    if len(room.occupants) > 0:
                         textfile.write("\n" + '----------------------------' + "\n")
-                        textfile.write('Offices {} is occupied by: '.format(rooms.room_name))
+                        textfile.write('Offices {} is occupied by: '.format(room.room_name))
                         textfile.write("\n" + '----------------------------' + "\n")
                         textfile.write(" \n ")
-                        for occupant in rooms.occupants:
+                        for occupant in room.occupants:
                             members = ''
                             members += ('\n {}'.format(occupant.person_name))
                             textfile.write(members)
@@ -434,9 +439,9 @@ class Amity(object):
         ''' this prints the members of a room once a name is given'''
         room_name = room_name.lower()
         one = None
-        for rooms in self.all_rooms:
-            if room_name == rooms.room_name:
-                one = rooms
+        for room in self.all_rooms:
+            if room_name == room.room_name:
+                one = room
 
         if one is None:
             return('This room does not exist in the system ')

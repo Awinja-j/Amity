@@ -3,7 +3,7 @@
 Usage:
 Amity>> create_room <roomtype> <name>...                                                           
 Amity>> add_person <first_name> <last_name> <person_role> [--accommodate=N]   
-Amity>> find_userid <first_name> <last_name>                                                       
+Amity>> found_userid <first_name> <last_name>                                                       
 Amity>> reallocate_person <person_ID> <room_name>                                               
 Amity>> load_people <filename>
 Amity>> print_allocations [--o=file_name]
@@ -25,9 +25,10 @@ import cmd
 from colorama import init
 init(strip=not sys.stdout.isatty())
 from docopt import docopt, DocoptExit
-from Amity import Amity
 from termcolor import cprint
 from pyfiglet import figlet_format
+from Amity import Amity
+
 
 
 def docopt_cmd(func):
@@ -90,10 +91,10 @@ class FrontAmity(cmd.Cmd):
         print(self.amity.add_person(person_name, person_role,want_accomodation))
 
     @docopt_cmd
-    def do_find_userid(self, arg):
+    def do_found_userid(self, arg):
         """Usage: find_userid <first_name> <last_name>"""
         person_name = arg['<first_name>'] + ' ' + arg['<last_name>']
-        print(self.amity.find_userid(person_name))
+        print(self.amity.found_userid(person_name))
     @docopt_cmd
     def do_reallocate_person(self, arg):
         """Usage: reallocate_person <person_ID> <room_name>"""
