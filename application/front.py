@@ -28,6 +28,7 @@ from docopt import docopt, DocoptExit
 from termcolor import cprint
 from pyfiglet import figlet_format
 from Amity import Amity
+# from db_manager import DbManager
 
 
 
@@ -72,6 +73,7 @@ class FrontAmity(cmd.Cmd):
     prompt = 'Amity>> '
     file = None
     amity = Amity()
+    # dbmanager = DbManager()
 
 
     @docopt_cmd
@@ -110,7 +112,8 @@ class FrontAmity(cmd.Cmd):
     @docopt_cmd
     def do_print_unallocated(self,args):
         """Usage: print_unallocated [--o=filename]"""
-        print(self.amity.print_unallocated(args))
+        # print(self.amity.print_unallocated(args))
+        self.amity.print_unallocated(args)
     @docopt_cmd
     def do_print_room(self, arg):
         """Usage: print_room <room_name>"""
@@ -119,10 +122,12 @@ class FrontAmity(cmd.Cmd):
     def do_save_state(self, args):
         """Usage: save_state [--db=<sqlite_database>]"""
         print(args)
+        # print(self.dbmanager.save_state(args))
         print(self.amity.save_state(args))
     @docopt_cmd
     def do_load_state(self, args):
         """Usage: load_state [--db=<sqlite_database>]"""
+        # print(self.dbmanager.load_state(args))
         print(self.amity.load_state(args))
 
     def do_quit(self, arg):

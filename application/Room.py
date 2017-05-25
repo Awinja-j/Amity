@@ -20,7 +20,7 @@ class Livingspace(Room):
             self.room_type = 'livingspace'
 
         def __repr__(self):
-            return self.room_name
+            return (str(self.room_name))
 
             
 class Office(Room):
@@ -31,5 +31,5 @@ class Office(Room):
            self.room_type = 'office'
 
         def __repr__(self):
-            return self.room_name
+            return (str(self.room_name))
     

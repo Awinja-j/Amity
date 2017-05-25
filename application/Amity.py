@@ -2,7 +2,7 @@ import os
 import random
 import sqlite3
 from os import sys, path
-from Room import Room, Office, Livingspace
+from Room import Office, Livingspace
 from Person import Person, Staff, Fellow
 
 
@@ -13,12 +13,12 @@ sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 class Amity(object):
     ''' this application should be able to be installed using a package '''
     def __init__(self):
-        self.all_staff = []
-        self.all_fellow = []
+        self.all_staffs = []
+        self.all_fellows = []
         self.all_people = []
-        self.available_room = []
+        self.available_rooms = []
         self.all_offices = []
-        self.all_livingspace = []
+        self.all_livingspaces = []
         self.all_rooms = []
         self.awaiting_allocation = []
 
@@ -44,7 +44,7 @@ class Amity(object):
                             print ('Please add more than one room to ease up allocation.')
 
                         else:
-                            self.all_staff.append(person)
+                            self.all_staffs.append(person)
                             self.all_people.append(person)
                             office.occupants.append(person)
                             self.awaiting_allocation.remove(person)
@@ -53,10 +53,10 @@ class Amity(object):
 
 
                     else:
-                        if self.all_offices and self.all_livingspace:
+                        if self.all_offices and self.all_livingspaces:
 
                             try:
-                                office = random.choice(self.get_available_rooms(self.all_livingspace))
+                                office = random.choice(self.get_available_rooms(self.all_livingspaces))
                                 livingspace = random.choice(self.get_available_rooms(self.all_offices))
                             except IndexError:
                                 self.awaiting_allocation.append(person)
@@ -65,7 +65,7 @@ class Amity(object):
                                     person.person_name))
 
                             else:
-                                self.all_fellow.append(person)
+                                self.all_fellows.append(person)
                                 self.all_people.append(person)
                                 livingspace.occupants.append(person)
                                 office.occupants.append(person)
@@ -78,7 +78,7 @@ class Amity(object):
     def create_room(self, room_type, room_names):
         room_type = room_type.lower()
         offices = [room.room_name for room in self.all_offices]
-        livingspaces = [room.room_name for room in self.all_livingspace]
+        livingspaces = [room.room_name for room in self.all_livingspaces]
         rooms = offices + livingspaces
         if room_type not in ['office','livingspace']:
             print ("")
@@ -100,7 +100,7 @@ class Amity(object):
 
                     else:
                         lv = Livingspace(name)
-                        self.all_livingspace.append(lv)
+                        self.all_livingspaces.append(lv)
                         self.all_rooms.append(lv)
                         print ("")
                         print('Livingspace {} has been created succesfully!!'.format(name))
@@ -138,7 +138,7 @@ class Amity(object):
                             return '{} has succesfully been added to Amity. but will be allocated a room one becomes available'.format(
                                 staff.person_name)
                         else:
-                            self.all_staff.append(staff)
+                            self.all_staffs.append(staff)
                             self.all_people.append(staff)
                             office.occupants.append(staff)
                             print ("")
@@ -163,7 +163,7 @@ class Amity(object):
                                 return '{} has succesfully been added to Amity. but will be allocated a room one becomes available'.format(
                                     fellow.person_name)
                             else:
-                                self.all_fellow.append(fellow)
+                                self.all_fellows.append(fellow)
                                 self.all_people.append(fellow)
                                 office.occupants.append(fellow)
                                 print("")
@@ -174,10 +174,10 @@ class Amity(object):
                             return '{} has succesfully been added to Amity. but will be allocated a room one becomes available'.format(
                                 fellow.person_name)
                     else:
-                        if (self.all_offices) and (self.all_livingspace):
+                        if (self.all_offices) and (self.all_livingspaces):
                             fellow = Fellow(person_name, want_accomodation)
                             try:
-                                office = random.choice(self.get_available_rooms(self.all_livingspace))
+                                office = random.choice(self.get_available_rooms(self.all_livingspaces))
                                 livingspace = random.choice(self.get_available_rooms(self.all_offices))
                             except IndexError:
                                 self.awaiting_allocation.append(fellow)
@@ -185,7 +185,7 @@ class Amity(object):
                                 return '{} has succesfully been added to Amity but will be allocated a room one becomes available'.format(
                                     fellow.person_name)
                             else:
-                                self.all_fellow.append(fellow)
+                                self.all_fellows.append(fellow)
                                 self.all_people.append(fellow)
                                 livingspace.occupants.append(fellow)
                                 office.occupants.append(fellow)
@@ -259,7 +259,7 @@ class Amity(object):
 
         else:
             if new_room.room_type == 'livingspace':
-                vacant_rooms = self.get_available_rooms(self.all_livingspace)
+                vacant_rooms = self.get_available_rooms(self.all_livingspaces)
                 for room in vacant_rooms:
                     if person_moving.person_ID in [person.person_ID for person in room.occupants]:
                         if new_room == room:
@@ -314,10 +314,10 @@ class Amity(object):
         '''prints office and livingspace  allocation for fellows and staff
             you can also choose to optionally save them to a text file'''
         if not args['--o']:
-            if len(self.all_livingspace) < 1:
+            if len(self.all_livingspaces) < 1:
                 print ("There are no livingspaces yet")
             else:
-                for room in self.all_livingspace:
+                for room in self.all_livingspaces:
                     if len(room.occupants) > 0:
                         print('----------------------------')
                         print('Livingspace {} is occupied by: '.format(room.room_name) )
@@ -348,7 +348,7 @@ class Amity(object):
             if filename.endswith(".txt") is False:
                 filename += ".txt"
             with open(filename, "wt") as textfile:
-                for room in self.all_livingspace:
+                for room in self.all_livingspaces:
                     if len(room.occupants) > 0:
                         textfile.write("\n" + '----------------------------' + "\n")
                         textfile.write('Livingspace ' + room.room_name  + ' is occupied by:' )
@@ -382,21 +382,7 @@ class Amity(object):
                 print('Unallocated People: ')
                 print('----------------------------')
                 for person in self.awaiting_allocation:
-                    return str(person.person_name).strip('[]')
-
-
-            print('----------------------------')
-            print('Unallocated Rooms')
-            print('----------------------------')
-            for room in self.all_rooms:
-                if len(room.occupants) < 1:
-                    return str(room.occupants).strip('[]')
-
-                else:
-                    print("")
-                    return ("All rooms in Amity have been allocated")
-
-
+                    print str(person.person_name).strip('[]')
 
         else:
             filename = str(args['--o'])
@@ -420,18 +406,6 @@ class Amity(object):
                             textfile.write(members)
                 else:
                     print("Everyone in Amity has been allocated a room")
-                for room in self.all_rooms:
-                    if len(room.occupants) == 0:
-                        textfile.write('This room has not been allocated ')
-                        textfile.write("\n" + '----------------------------' + "\n")
-                        members = ''
-                        members += ('\n {}'.format(room.room_name))
-                        textfile.write(members)
-                        textfile.write("\n" + '----------------------------' + "\n")
-                    else:
-                        textfile.write("")
-                        textfile.write("All rooms in Amity have been allocated")
-                        textfile.write("")
             print('file printed and saved sucessfully!')
 
 
@@ -460,26 +434,26 @@ class Amity(object):
         conn = sqlite3.connect(db_name)
         c = conn.cursor()
 
-        c.execute('''CREATE TABLE IF NOT EXISTS all_fellow(
+        c.execute('''CREATE TABLE IF NOT EXISTS all_fellows(
                     person_ID PRIMARY_KEY,
                     person_name,
                     want_accomodation  )
                     ''')
         conn.commit()
-        c.execute('''CREATE TABLE IF NOT EXISTS all_staff(
+        c.execute('''CREATE TABLE IF NOT EXISTS all_staffs(
                     person_ID PRIMARY_KEY,
                     person_name,
                     want_accomodation  )
                     ''')
         conn.commit()
-        c.execute('''CREATE TABLE IF NOT EXISTS all_office(
+        c.execute('''CREATE TABLE IF NOT EXISTS all_offices(
                     room_ID  PRIMARY KEY,
                     room_name,
                     max_no_occupants
                     )
                     ''')
         conn.commit()
-        c.execute('''CREATE TABLE IF NOT EXISTS all_livingspace(
+        c.execute('''CREATE TABLE IF NOT EXISTS all_livingspaces(
                     room_ID  PRIMARY KEY,
                     room_name,
                     max_no_occupants
@@ -487,17 +461,17 @@ class Amity(object):
                     ''')
         conn.commit()
         c.execute('''CREATE TABLE IF NOT EXISTS all_rooms(
-                    room_ID  PRIMARY KEY, 
-                    room_type, 
-                    room_name, 
+                    room_ID  PRIMARY KEY,
+                    room_type,
+                    room_name,
                     max_no_occupants
                      )
                      ''')
         conn.commit()
         c.execute('''CREATE TABLE IF NOT EXISTS all_people(
-                    person_ID PRIMARY KEY, 
-                    person_name, 
-                    person_role, 
+                    person_ID PRIMARY KEY,
+                    person_name,
+                    person_role,
                     want_accomodation
                     )
                     ''')
@@ -528,22 +502,22 @@ class Amity(object):
         """Delete all the existing tables in the database."""
         conn = sqlite3.connect(db_name)
         c = conn.cursor()
-        c.execute('''DROP TABLE IF EXISTS ALL_OFFICE''')
+        c.execute('''DROP TABLE IF EXISTS ALL_OFFICES''')
 
         # Save (commit) the changes
         conn.commit()
 
-        c.execute('''DROP TABLE IF EXISTS ALL_LIVINGSPACE''')
+        c.execute('''DROP TABLE IF EXISTS ALL_LIVINGSPACES''')
 
         # Save (commit) the changes
         conn.commit()
 
-        c.execute('''DROP TABLE IF EXISTS ALL_FELLOW''')
+        c.execute('''DROP TABLE IF EXISTS ALL_FELLOWS''')
 
         # Save (commit) the changes
         conn.commit()
 
-        c.execute('''DROP TABLE IF EXISTS ALL_STAFF''')
+        c.execute('''DROP TABLE IF EXISTS ALL_STAFFS''')
 
         # Save (commit) the changes
         conn.commit()
@@ -593,8 +567,8 @@ class Amity(object):
         self.create_all_tables(db_name)
 
 
-        for data in self.all_fellow:
-            c.execute("""INSERT INTO all_fellow (
+        for data in self.all_fellows:
+            c.execute("""INSERT INTO all_fellows (
                                     person_ID, person_name, want_accomodation
                                 ) VALUES (
                                     '%s','%s','%s'
@@ -603,8 +577,8 @@ class Amity(object):
             conn.commit()
 
 
-        for data in self.all_staff:
-            c.execute("""INSERT INTO all_staff (
+        for data in self.all_staffs:
+            c.execute("""INSERT INTO all_staffs (
                                     person_ID,person_name,want_accomodation
                                 ) VALUES (
                                     '%s','%s','%s'
@@ -613,7 +587,7 @@ class Amity(object):
             conn.commit()
 
         for data in self.all_offices:
-            c.execute("""INSERT INTO all_office (
+            c.execute("""INSERT INTO all_offices (
                                     room_ID,room_name,
                                     max_no_occupants
                                 ) VALUES (
@@ -623,8 +597,8 @@ class Amity(object):
             # Save (commit) the changes
             conn.commit()
 
-        for data in self.all_livingspace:
-            c.execute("""INSERT INTO all_livingspace (
+        for data in self.all_livingspaces:
+            c.execute("""INSERT INTO all_livingspaces (
                                     room_ID,room_name,
                                     max_no_occupants
                                 ) VALUES (
@@ -699,7 +673,7 @@ class Amity(object):
                         print("Database Doesn't exist!!")
 
                 for rows in c.execute(
-                     """SELECT * FROM all_office"""
+                     """SELECT * FROM all_offices"""
                      ):
                      room_name = str(rows[1])
                      office = Office(room_name)
@@ -709,45 +683,52 @@ class Amity(object):
                      self.all_rooms.append(office)
 
                 for rows in c.execute(
-                     """SELECT * FROM all_livingspace"""
+                     """SELECT * FROM all_livingspaces"""
                     ):
 
                      room_name = str(rows[1])
                      living = Livingspace(room_name)
                      living.room_ID = int(rows[0])
                      living.max_no_occupants = int(rows[2])
-                     self.all_livingspace.append(living)
+                     self.all_livingspaces.append(living)
                      self.all_rooms.append(living)
 
                 for rows in c.execute(
-                     """SELECT * FROM all_fellow"""
+                     """SELECT * FROM all_fellows"""
                 ):
                      person_name = str(rows[1]).split(",")
                      want_accomodation = str(rows[2])
                      fellow = Fellow(person_name, want_accomodation)
                      fellow.person_ID = int(rows[0])
-                     # fellow.want_accomodation = str(rows[2])
-                     self.all_fellow.append(fellow)
+                     self.all_fellows.append(fellow)
                      self.all_people.append(fellow)
 
 
                 for rows in c.execute(
-                     """SELECT * FROM all_staff"""
+                     """SELECT * FROM all_staffs"""
                     ):
                      person_name = str(rows[1]).split(",")
                      staff = Staff(person_name, want_accomodation='n')
                      staff.person_ID = int(rows[0])
-                     self.all_staff.append(staff)
+                     self.all_staffs.append(staff)
                      self.all_people.append(staff)
 
                 for rows in c.execute(
                     """SELECT * FROM all_rooms"""
                 ):
-                    room_name = str(rows[2]).split(" ")
-                    room = Room(room_name)
-                    room.room_ID = int(rows[0])
-                    room.room_type = str(rows[1])
-                    room.max_no_occupants = int(rows[3])
+                    room_type = str(rows[1])
+                    if room_type == "livingspace":
+                        room_name = str(rows[2]).split(" ")
+                        room = Livingspace(room_name)
+                        room.room_ID = int(rows[0])
+                        room.room_type = str(rows[1])
+                        room.max_no_occupants = int(rows[3])
+                    else:
+                        room_name = str(rows[2]).split(" ")
+                        room = Office(room_name)
+                        room.room_ID = int(rows[0])
+                        room.room_type = str(rows[1])
+                        room.max_no_occupants = int(rows[3])
                     self.all_rooms.append(room)
 
                 for rows in c.execute(
@@ -776,29 +757,45 @@ class Amity(object):
                 for rows in c.execute(
                      """SELECT * FROM occupants"""
                 ):
-                     room_name = str(rows[2])
-                     room = Room(room_name)
-                     room.room_ID = int(rows[0])
-                     room.room_type = str(rows[1])
-                     room.max_no_occupants = int(rows[7])
-                     if room.room_type == "livingspace":
-                        self.all_livingspace.append(room)
-                     else:
-                        self.all_offices.append(room)
-                     self.all_rooms.append(room)
+                     room_type = str(rows[1])
+                     if room_type == "livingspace":
+                         room_name = str(rows[2])
+                         room = Livingspace(room_name)
+                         room.room_ID = int(rows[0])
+                         room.max_no_occupants = int(rows[7])
+                         self.all_livingspaces.append(room)
+                         self.all_rooms.append(room)
 
-                     person_name = str(rows[4])
-                     want_accomodation = str(rows[6])
-                     person = Person(person_name, want_accomodation)
-                     person.person_ID = int(rows[3])
-                     person.person_role = str(rows[5])
+                         person_name = str(rows[4])
+                         want_accomodation = str(rows[6])
+                         person = Person(person_name, want_accomodation)
+                         person.person_ID = int(rows[3])
+                         person.person_role = str(rows[5])
 
-                     room.occupants.append(person)
-                     if person.person_role ==  "fellow":
-                         self.all_fellow.append(person)
+                         room.occupants.append(person)
+                         if person.person_role == "fellow":
+                             self.all_fellows.append(person)
+                         else:
+                             self.all_staffs.append(person)
+                         self.all_people.append(person)
                      else:
-                         self.all_staff.append(person)
-                     self.all_people.append(person)
+                         room_name = str(rows[2])
+                         room = Office(room_name)
+                         room.room_ID = int(rows[0])
+                         room.max_no_occupants = int(rows[7])
+                         self.all_offices.append(room)
+                         self.all_rooms.append(room)
+
+                         person_name = str(rows[4])
+                         want_accomodation = str(rows[6])
+                         person = Person(person_name, want_accomodation)
+                         person.person_ID = int(rows[3])
+                         person.person_role = str(rows[5])
+
+                         room.occupants.append(person)
+                         if person.person_role == "staff":
+                             self.all_staffs.append(person)
+                             self.all_people.append(person)
 
 
             self.close_conn(db_name)

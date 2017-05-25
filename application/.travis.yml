@@ -1,0 +1,15 @@
+language: python
+sudo: required
+python:
+- '2.7'
+- '3.6'
+install:
+- pip install -r requirements.txt
+script: nosetests --with-coverage
+after_success:
+  coveralls
+notifications:
+  slack: TRAVIS_SLACK_ID
+env:
+  matrix:
+    secure: UZw96pF4DZDxV6m84i4PSlZlHlZ5ccLauIZhmrNddWojRg4pXpC79Rp50SZkVS5CJsvIPN7xDCEbpdYxrZuE/4LUWQLI5dWaSdCuiXqVmTX1w1BfVF2bDARhB6M0FPb38gp6zzuCl99KB0GKfr4B4h/0YEsE3RAwG6czB7ekykMyAAooq9Cay2UfS3ftPvjrdRbWrzumZJW+5KEt+1NGKSVdxrREjujw+1UGkNWw/ZTg3WBcmGZRtKjg6zF6cjwocMvi62pP+3fcUlSTEkXFVSevm1n0NxFaHf1tufhTtFFr2V9GMvmMtkNOOPXGSXR6MoFJP0Vou0asmSF2TUPO2j3q41f89i4cTgSFBIpgS06RT7vXLEbYNmWkWHp1YMFnBleDFS7aRM3orIR1RhrGpgCqPEPT8ikQMijv22rGIBEvPL4pHl/ZCV/0G3iMdm4uxZ5LmDTwLfZfO+8181PP9imQMj6FEl6RYAajXQk4vMKNlL7euiFTKtEHWnF+yD/mqFrCoPzJQcpSMWX1imU3IcOd7y/DSyKkYsJDTnLDvsGFsZgLHrn/ySwgrGgE2bdluIEE64bu1PUIDxV2vhRSwfs5tQyDkY6hPnTGSk/ObJMOWt5jwEmEFR/mWOgxGe1YS2EILr4A71uLjXmrxcXzsfUReCuzP8BUoDO5vmlFHe4=
