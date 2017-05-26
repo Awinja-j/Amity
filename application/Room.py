@@ -1,5 +1,7 @@
 import random
+
 from abc import ABCMeta, abstractmethod
+
 
 class Room(object):
         __metaclass__ = ABCMeta
@@ -20,16 +22,16 @@ class Livingspace(Room):
             self.room_type = 'livingspace'
 
         def __repr__(self):
-            return (str(self.room_name))
+            return str(self.room_name)
 
             
 class Office(Room):
 
         def __init__(self, room_name):
-           Room.__init__(self, room_name)
-           self.max_no_occupants = 4
-           self.room_type = 'office'
+            Room.__init__(self, room_name)
+            self.max_no_occupants = 4
+            self.room_type = 'office'
 
         def __repr__(self):
-            return (str(self.room_name))
+            return str(self.room_name)
     

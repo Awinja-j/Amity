@@ -28,7 +28,7 @@ from docopt import docopt, DocoptExit
 from termcolor import cprint
 from pyfiglet import figlet_format
 from Amity import Amity
-# from db_manager import DbManager
+from db_manager import DbManager
 
 
 
@@ -73,8 +73,7 @@ class FrontAmity(cmd.Cmd):
     prompt = 'Amity>> '
     file = None
     amity = Amity()
-    # dbmanager = DbManager()
-
+    db = DbManager()
 
     @docopt_cmd
     def do_create_room(self, arg):
@@ -85,10 +84,7 @@ class FrontAmity(cmd.Cmd):
     def do_add_person(self, arg):
         """Usage: add_person <first_name> <last_name> <person_role> [--a=<want_accomodation>]"""
         person_name = arg['<first_name>'] + ' ' + arg['<last_name>']
-        if arg['--a'] == None:
-            want_accomodation = 'n'
-        else:
-            want_accomodation = str(arg['--a'])
+        want_accomodation = str(arg['--a'])
         person_role = arg['<person_role>']
         print(self.amity.add_person(person_name, person_role,want_accomodation))
 
@@ -107,12 +103,11 @@ class FrontAmity(cmd.Cmd):
         print(self.amity.load_people(arg['<filename>']))
     @docopt_cmd
     def do_print_allocations(self, args):
-        '''Usage: print_allocations [--o=filename]'''
+        """Usage: print_allocations [--o=filename]"""
         print(self.amity.print_allocations(args))
     @docopt_cmd
     def do_print_unallocated(self,args):
         """Usage: print_unallocated [--o=filename]"""
-        # print(self.amity.print_unallocated(args))
         self.amity.print_unallocated(args)
     @docopt_cmd
     def do_print_room(self, arg):
@@ -121,13 +116,10 @@ class FrontAmity(cmd.Cmd):
     @docopt_cmd
     def do_save_state(self, args):
         """Usage: save_state [--db=<sqlite_database>]"""
-        print(args)
-        # print(self.dbmanager.save_state(args))
         print(self.amity.save_state(args))
     @docopt_cmd
     def do_load_state(self, args):
         """Usage: load_state [--db=<sqlite_database>]"""
-        # print(self.dbmanager.load_state(args))
         print(self.amity.load_state(args))
 
     def do_quit(self, arg):
