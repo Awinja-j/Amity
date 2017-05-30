@@ -1,9 +1,0 @@
-{
-  "application/tests.py::TestAmity::test_load_people_to_a_room_using_file": true, 
-  "application/tests.py::TestAmity::test_load_state": true, 
-  "application/tests.py::TestAmity::test_reallocate": true, 
-  "application/tests.py::TestAmity::test_reallocate_staff": true, 
-  "application/tests.py::TestAmity::test_reallocate_to_a_room_that_does_not_exist": true, 
-  "application/tests.py::TestAmity::test_reallocate_to_full_room": true, 
-  "application/tests.py::TestAmity::test_reallocate_to_the_same_room": true
-}
