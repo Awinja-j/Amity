@@ -24,7 +24,7 @@ $ pip install -r requirements.txt
 Run the application
 
 ```
-$ python amity.py -i
+$ python application/front.py --interactive
 ```
 
 **Commands**

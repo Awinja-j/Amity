@@ -10,7 +10,7 @@ class TestAmity(unittest.TestCase):
     def setUp(self):
        self.amity = Amity()
        self.db = DbManager()
-    
+
     def test_create_room_office(self):
         self.amity.create_room('office', ['Antonorivo'])
         self.assertTrue(len(self.amity.all_offices),1)
@@ -165,7 +165,7 @@ class TestAmity(unittest.TestCase):
         self.assertEqual(self.amity.load_people("empty_file.txt"), "Error: can't find file or read data.")
 
     def test_print_allocation(self):
-        """ this tests print the names of the people 
+        """ this tests print the names of the people
         and the room they are  allocated to"""
         self.amity.create_room("Office", ["Naija"])
         self.amity.add_person("Joan Awinja", "staff", "Y")
