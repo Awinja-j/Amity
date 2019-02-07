@@ -88,7 +88,7 @@ class Amity(object):
         livingspaces = [room.room_name for room in self.all_livingspaces]
         rooms = offices + livingspaces
         if room_type not in ['office', 'livingspace']:
-            print ("")
+            print("")
             return 'This room type is invalid!!'
         else:
             for name in room_names:
@@ -547,7 +547,7 @@ class Amity(object):
 
             for data in room.occupants:
                 c.execute(""" INSERT INTO occupants(
-                     room_ID, room_name, room_type, person_ID, person_name,person_role, 
+                     room_ID, room_name, room_type, person_ID, person_name,person_role,
                      want_accomodation, max_no_occupants) VALUES(
                      '%s','%s','%s','%s','%s','%s', '%s', '%s')
                  """ % (
@@ -709,4 +709,3 @@ class Amity(object):
         db.close_conn(db_name)
         print('Data has been successfully loaded into the app')
         return 'Data has been successfully loaded into the app'
-
