@@ -1,4 +1,5 @@
-import sys, os
+import sys
+import os
 import unittest
 from Amity import Amity
 from db_manager import DbManager
@@ -72,7 +73,8 @@ class TestAmity(unittest.TestCase):
         if self.amity.awaiting_allocation:
             self.amity.create_room('office', 'deli')
             self.amity.allocate_room()
-            output = sys.stdout.getvalue().strip().split("\n")[-1]
+            out = sys.stdout
+            output = out.getvalue().strip().split("\n")[-1]
             self.assertTrue(output, '{} has been allocated to {} succesfully!!'.format('jones marion', 'deli'))
 
     def test_add_person_wrong_role_type(self):
@@ -120,7 +122,7 @@ class TestAmity(unittest.TestCase):
                         output = sys.stdout.getvalue().strip().split("\n")[-1]
                         self.assertTrue(output, '{} has been reallocated to {} succesfully!!'.format('joan awinja', 'penny'))
                     else:
-                        print 'nothing inside'
+                        print('nothing inside')
 
     def test_reallocate_staff_to_livingspace(self):
         self.amity.create_room('office', ['yellow'])
