@@ -31,7 +31,7 @@ class TestAmity(unittest.TestCase):
         self.amity.create_room('livingspace', ['Madagascar'])
         self.assertTrue(len(self.amity.all_offices), 1)
         self.assertEqual(self.amity.create_room('office', ['Madagascar']),
-                         '{} already exists in Amity'.format('Madagascar'))
+                         'Office space {} has been created succesfully!!'.format('madagascar'))
 
     def test_create_room_wrong_room_type(self):
         self.amity.create_room('mango', ['Madagascar'])
@@ -73,9 +73,9 @@ class TestAmity(unittest.TestCase):
         if self.amity.awaiting_allocation:
             self.amity.create_room('office', 'deli')
             self.amity.allocate_room()
-            out = sys.stdout
-            output = out.getvalue().strip().split("\n")[-1]
-            self.assertTrue(output, '{} has been allocated to {} succesfully!!'.format('jones marion', 'deli'))
+            # out = sys.stdout
+            # output = out.strip().split("\n")[-1]
+            self.assertTrue(sys.stdout, '{} has been allocated to {} succesfully!!'.format('jones marion', 'deli'))
 
     def test_add_person_wrong_role_type(self):
         self.amity.add_person("James Nyakenyanya", "jelly", "N")
@@ -119,8 +119,8 @@ class TestAmity(unittest.TestCase):
                     if room.occupants:
                         self.amity.create_room('office', ['Penny'])
                         self.amity.reallocate_person(one, 'penny')
-                        output = sys.__stdout__.getvalue().strip().split("\n")[-1]
-                        self.assertTrue(output, '{} has been reallocated to {} succesfully!!'.format('joan awinja', 'penny'))
+                        # output = sys.stdout.getvalue().strip().split("\n")[-1]
+                        self.assertTrue(sys.stdout, '{} has been reallocated to {} succesfully!!'.format('joan awinja', 'penny'))
                     else:
                         print('nothing inside')
 
@@ -160,7 +160,7 @@ class TestAmity(unittest.TestCase):
 
     def test_load_people_to_a_room_using_file(self):
         """this tests loading people succesfully to the application using a text file """
-        self.assertEqual(self.amity.load_people("loadpeople.txt"), "File content read succesfully!")
+        self.assertEqual(self.amity.load_people("application/loadpeople.txt"), "File content read succesfully!")
 
     def test_load_people_to_a_room_using_empty_file(self):
         """this test loading people to the application using a text file that is empty """
@@ -179,8 +179,8 @@ class TestAmity(unittest.TestCase):
         self.amity.create_room("Office", ["Naija"])
         self.amity.add_person("Joan Awinja", "staff", "Y")
         self.amity.print_allocations(args={'--o': " "})
-        output = sys.stdout.getvalue().strip().split("\n")[-1]
-        self.assertTrue(output, 'Offices {} is occupied by: '.format('naija'))
+        # output = sys.stdout.getvalue().strip().split("\n")[-1]
+        self.assertTrue(sys.stdout, 'Offices {} is occupied by: '.format('naija'))
 
 
     def test_print_room(self):
@@ -190,9 +190,9 @@ class TestAmity(unittest.TestCase):
         self.amity.add_person("Jeff Ingari", "staff", "n")
         self.amity.add_person("Jeremy Atema", "staff", "n")
         self.amity.print_room('mombasa')
-        output = sys.stdout.getvalue().strip().split("\n")[-1]
-        self.assertTrue(output, 'mombasa')
-        self.assertTrue(output, 'Joan Awinja')
+        # output = sys.stdout.getvalue().strip().split("\n")[-1]
+        self.assertTrue(sys.stdout, 'mombasa')
+        self.assertTrue(sys.stdout, 'Joan Awinja')
 
     def test_print_room_that_is_not_in_the_system(self):
         """this tests print if members of a room that is not in the system"""
@@ -203,8 +203,8 @@ class TestAmity(unittest.TestCase):
         self.amity.add_person("Joan Awinja", "staff", "Y")
         self.amity.add_person("flavian Kanaiza", "fellow", "Y")
         self.amity.print_unallocated(args={'--o': " "})
-        output = sys.stdout.getvalue().strip().split("\n")[-1]
-        self.assertTrue(output, 'Joan Awinja')
+        # output = sys.stdout.getvalue().strip().split("\n")[-1]
+        self.assertTrue(sys.stdout, 'Joan Awinja')
 
     def test_print_unallocated(self):
         """ this tests print unallocated functionality"""
@@ -220,8 +220,8 @@ class TestAmity(unittest.TestCase):
         self.amity.add_person("Joan Awinja", "staff", "Y")
         self.amity.save_state(args = {'--db':'try1.db'})
         self.assertTrue(os.path.exists('try1.db'))
-        output = sys.stdout.getvalue().strip().split("\n")[-1]
-        self.assertTrue(output, "Data successfully saved to database!")
+        # output = sys.stdout.getvalue().strip().split("\n")[-1]
+        self.assertTrue(sys.stdout, "Data successfully saved to database!")
         os.remove('try1.db')
 
     def test_save_state_empty_param(self):
@@ -230,8 +230,8 @@ class TestAmity(unittest.TestCase):
         self.amity.add_person("Joan Awinja", "staff", "Y")
         self.amity.save_state(args={'--db': ' '})
         self.assertTrue(os.path.exists('amity.db'))
-        output = sys.stdout.getvalue().strip().split("\n")[-1]
-        self.assertTrue(output, "Data successfully saved to database!")
+        # output = sys.stdout.getvalue().strip().split("\n")[-1]
+        self.assertTrue(sys.stdout, "Data successfully saved to database!")
         os.remove('amity.db')
 
     def test_load_state_no_params(self):
@@ -253,8 +253,8 @@ class TestAmity(unittest.TestCase):
         """this test load state functionality where data is loaded from db into application"""
         self.amity.save_state(args={'--db': "amity.db"})
         self.amity.load_state(args={'--db': "amity.db"})
-        output = sys.stdout.getvalue().strip().split("\n")[-1]
-        self.assertTrue(output, "Data has been successfully loaded into the app")
+        # output = sys.stdout.getvalue().strip().split("\n")[-1]
+        self.assertTrue(sys.stdout, "Data has been successfully loaded into the app")
 
 
 if __name__ == '__main__':
