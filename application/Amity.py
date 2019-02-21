@@ -106,7 +106,6 @@ class Amity(object):
                         print ('Office space {} has been created succesfully!!'.format(name))
                         return 'Office space {} has been created succesfully!!'.format(name)
 
-
                     else:
                         livingspace = Livingspace(name)
                         self.all_livingspaces.append(livingspace)

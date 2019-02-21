@@ -119,7 +119,7 @@ class TestAmity(unittest.TestCase):
                     if room.occupants:
                         self.amity.create_room('office', ['Penny'])
                         self.amity.reallocate_person(one, 'penny')
-                        output = sys.stdout.getvalue().strip().split("\n")[-1]
+                        output = sys.__stdout__.getvalue().strip().split("\n")[-1]
                         self.assertTrue(output, '{} has been reallocated to {} succesfully!!'.format('joan awinja', 'penny'))
                     else:
                         print('nothing inside')
